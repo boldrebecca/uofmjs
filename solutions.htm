@@ -108,6 +108,11 @@ font-style: italic;
 */ 
 
     var allInputs = document.querySelectorAll("input");
+    console.log(allInputs);
+
+    allInputs.forEach(function (inp) {
+        inp.addEventListener("blur", isEverythingValid);
+    });
 
     var formInputs = document.querySelectorAll("input:not([type=radio])");
     formInputs.forEach(function (inp) {
@@ -115,6 +120,10 @@ font-style: italic;
         inp.addEventListener("blur", isEverythingValid);
     });
 
+    var radioInputs = document.querySelectorAll("input[type=radio]");
+    radioInputs.forEach(function (rad) {
+        rad.addEventListener("click", inputValidate);
+    });
 
 /*
 Exercise 3: Determine what action needs to be taken, depending on the element being targeted.
@@ -124,9 +133,16 @@ We will use a switch statement to call different functions
 
     function inputValidate(i) {
         console.log(i.target.type);
+
         switch (i.target.type) {
             case "text":
                 validateText(i.target);
+                break;
+            case "number":
+                validateNumber(i.target);
+                break;
+            case "radio":
+                validateRadio(i.target);
                 break;
 
         }
@@ -140,7 +156,20 @@ We will use a switch statement to call different functions
 */
 
         function validateText(input) {
-
+            console.log(input.value);
+            if (input.value.length > 2) {
+                console.log('valid');
+                input.setAttribute('class', 'valid-text');
+                document.querySelector('.invalid-text').remove();
+            } else {
+                console.log('Not valid');
+                var warningSpan = document.createElement("span");
+                warningSpan.setAttribute('class', 'invalid-text');
+                var warningContent = document.createTextNode("Please enter your full name");
+                warningSpan.appendChild(warningContent);
+                input.parentElement.append(warningSpan);
+            }
+        }
 
     }
 
@@ -155,7 +184,12 @@ We will use a switch statement to call different functions
 */
 
     function validateRadio(radio) {
-
+        var eaten_message = document.getElementById('eaten_message');
+        if (radio.value == "No") {
+            eaten_message.style.display = "block";
+        } else {
+            eaten_message.style.display = "none";
+        }
     }
 // Exercise 6 : Validate number input
 /*
@@ -165,12 +199,23 @@ Add this function in the switch statement from exercise 3
 */
 
     function validateNumber(number) {
-
+        if (number.value != "" && number.value < 3) {
+            alert("You're in luck, dinosaurs under 3 don't have to register!");
+        }
     }
 
 // Exercise 7 : Validate form, enable submit button
 
     function isEverythingValid() {
-
+        var valid = true;
+        var required_elements = document.querySelectorAll('.required_input');
+        required_elements.forEach(function (element) {
+            if (!element.value) {
+                valid = false;
+            }
+        });
+        if (valid) {
+            document.getElementById('submit_button').removeAttribute('disabled');
+        }
     }
 </script>
